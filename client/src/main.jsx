@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
+import './env-check.js'
 
 // Validate required environment variables
 const requiredEnvVars = ['VITE_RAZORPAY_KEY_ID', 'VITE_RAZORPAY_KEY_SECRET'];

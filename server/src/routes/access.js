@@ -25,13 +25,12 @@ router.get('/qr/:token', async (req, res) => {
 	try {
 		const { token } = req.params;
 		const qrCodeDataURL = await generateQRCode(token);
-		// Convert data URL to base64 string and remove the prefix
-		const base64Data = qrCodeDataURL.replace(/^data:image\/png;base64,/, '');
-		const imageBuffer = Buffer.from(base64Data, 'base64');
 		
-		res.setHeader('Content-Type', 'image/png');
-		res.setHeader('Cache-Control', 'public, max-age=86400'); // Cache for 24 hours
-		return res.send(imageBuffer);
+		// Return the QR code as JSON with the data URL
+		return res.json({ 
+			qrCode: qrCodeDataURL,
+			token: token
+		});
 	} catch (err) {
 		return res.status(500).json({ error: 'Failed to generate QR code' });
 	}

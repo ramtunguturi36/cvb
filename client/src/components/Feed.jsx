@@ -13,26 +13,42 @@ function loadScript(src) {
 }
 
 async function openRazorpayCheckout({ amount, orderId, onSuccess }) {
-	const ok = await loadScript('https://checkout.razorpay.com/v1/checkout.js')
-	if (!ok || !window.Razorpay) throw new Error('Razorpay SDK failed to load')
-	const key = import.meta.env.VITE_RAZORPAY_KEY_ID
-	if (!key) throw new Error('Missing VITE_RAZORPAY_KEY_ID')
-	return new Promise((resolve, reject) => {
-		const rzp = new window.Razorpay({
-			key,
-			amount,
-			currency: 'INR',
-			order_id: orderId,
-			handler: function (response) {
-				onSuccess(response)
-				resolve(true)
-			},
+	try {
+		console.log('Loading Razorpay script...');
+		const ok = await loadScript('https://checkout.razorpay.com/v1/checkout.js')
+		if (!ok || !window.Razorpay) {
+			console.error('Razorpay SDK failed to load. Window.Razorpay:', !!window.Razorpay);
+			throw new Error('Razorpay SDK failed to load')
+		}
+		console.log('Razorpay script loaded successfully');
+		
+		const key = import.meta.env.VITE_RAZORPAY_KEY_ID
+		console.log('Razorpay Key ID:', key); // Log the actual key to verify
+		if (!key) throw new Error('Missing VITE_RAZORPAY_KEY_ID')
+		
+		return new Promise((resolve, reject) => {
+			console.log('Initializing Razorpay with:', { amount, orderId });
+			const rzp = new window.Razorpay({
+				key,
+				amount,
+				currency: 'INR',
+				order_id: orderId,
+				handler: function (response) {
+					console.log('Payment successful:', response);
+					onSuccess(response)
+					resolve(true)
+				},
+			})
+			rzp.on('payment.failed', function (response) {
+				console.error('Payment failed:', response);
+				reject(new Error('Payment failed: ' + (response?.error?.description || 'Unknown error')))
+			})
+			rzp.open()
 		})
-		rzp.on('payment.failed', function () {
-			reject(new Error('Payment failed'))
-		})
-		rzp.open()
-	})
+	} catch (error) {
+		console.error('Razorpay checkout error:', error);
+		throw error;
+	}
 }
 
 function VideoCard({ item, onUnlock, onAddToCart, onSave }) {
@@ -247,6 +263,13 @@ export default function Feed({ onAddToCart, searchQuery = '', onSave }) {
 				onSuccess: async (response) => {
 					try {
 						// 3) Verify payment on server
+						console.log('Sending verification request with:', {
+							orderId: response.razorpay_order_id,
+							paymentId: response.razorpay_payment_id,
+							signature: response.razorpay_signature,
+							videoId: video._id
+						});
+
 						const verifyRes = await fetch('/api/orders/verify', {
 							method: 'POST',
 							headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
@@ -256,9 +279,25 @@ export default function Feed({ onAddToCart, searchQuery = '', onSave }) {
 								razorpay_signature: response.razorpay_signature,
 								videoId: video._id,
 							}),
-						})
-						if (!verifyRes.ok) throw new Error('Verification failed')
-						const vr = await verifyRes.json()
+						});
+
+						console.log('Verification response status:', verifyRes.status);
+						const responseText = await verifyRes.text();
+						console.log('Raw verification response:', responseText);
+
+						if (!verifyRes.ok) {
+							throw new Error(`Verification failed: ${responseText}`);
+						}
+
+						let vr;
+						try {
+							vr = JSON.parse(responseText);
+						} catch (e) {
+							console.error('Failed to parse verification response:', e);
+							throw new Error('Invalid response from server');
+						}
+
+						console.log('Parsed verification response:', vr);
 						// 4) Fetch QR image using token
 						const qrRes = await fetch(`/api/access/qr/${vr.token}`)
 						if (!qrRes.ok) throw new Error('Failed to fetch QR')

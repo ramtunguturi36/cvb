@@ -10,4 +10,7 @@ export default defineConfig({
       '/uploads': 'http://localhost:5000',
     },
   },
+  define: {
+    'import.meta.env.VITE_RAZORPAY_KEY_ID': JSON.stringify('rzp_test_RGiVuMANEOnRPh')
+  }
 })
