@@ -284,14 +284,30 @@ export default function Feed({ onAddToCart, searchQuery = '', onSave }) {
 	return (
 		<div className="space-y-8">
 			{message && (
-				<div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-center space-x-3">
-					<svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-					</svg>
-					<div 
-						className="text-green-800 font-medium"
-						dangerouslySetInnerHTML={{ __html: message }}
-					/>
+				<div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+					<div className="bg-white rounded-2xl w-full max-w-md shadow-2xl border border-gray-200 overflow-hidden">
+						<div className="bg-gradient-to-r from-green-500 to-teal-500 p-6 text-white">
+							<div className="flex justify-between items-center">
+								<h3 className="text-xl font-bold">Payment Successful</h3>
+								<button
+									onClick={() => setMessage('')}
+									className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+								>
+									<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+									</svg>
+								</button>
+							</div>
+						</div>
+						<div className="p-6">
+							<div className="flex flex-col items-center">
+								<div 
+									className="w-full"
+									dangerouslySetInnerHTML={{ __html: message }}
+								/>
+							</div>
+						</div>
+					</div>
 				</div>
 			)}
 			
