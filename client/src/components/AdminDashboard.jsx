@@ -443,8 +443,14 @@ export default function AdminDashboard({ user, onLogout }) {
 											</div>
 										)}
 										<div className="mt-1 text-xs text-gray-500 flex items-center justify-between">
-											{video.qrCodeId && (
-												<span>QR: {video.qrCodeId}</span>
+											{video.previewUrl && (
+												<div>
+													<img 
+														src={toAbsolute(video.previewUrl)} 
+														alt="Video Preview" 
+														className="w-20 h-20 object-cover rounded" 
+													/>
+												</div>
 											)}
 											<span className="ml-auto">{video.isActive ? 'Active' : 'Inactive'}</span>
 										</div>

@@ -105,15 +105,15 @@ function VideoCard({ item, onUnlock, onAddToCart, onSave }) {
 				<p className="text-sm text-gray-600 line-clamp-2 mb-4 leading-relaxed">
 					{item.description || 'Premium video content available for purchase.'}
 				</p>
-				<div className="flex items-center justify-between">
+				<div className="flex flex-col space-y-4">
 					<div className="flex items-center space-x-2">
 						<span className="text-2xl font-bold text-green-600">₹{item.priceINR}</span>
 						<span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">Premium</span>
 					</div>
-					<div className="flex space-x-2">
+					<div className="flex flex-wrap gap-2">
 						<button 
 							onClick={() => onUnlock(item)} 
-							className="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md whitespace-nowrap"
+							className="flex-shrink-0 inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md"
 						>
 							<svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -122,7 +122,7 @@ function VideoCard({ item, onUnlock, onAddToCart, onSave }) {
 						</button>
 						<button 
 							onClick={() => onAddToCart && onAddToCart(item)} 
-							className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap"
+							className="flex-shrink-0 inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
 						>
 							<svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 11-4 0v-6m4 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
@@ -144,7 +144,7 @@ function VideoCard({ item, onUnlock, onAddToCart, onSave }) {
 									}
 								} catch (_) {}
 							}}
-							className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap"
+							className="flex-shrink-0 inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
 						>
 							<svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 8a3 3 0 10-2.83-4H12a3 3 0 000 6h.17A3.001 3.001 0 0015 8zM7 12a3 3 0 100 6 3 3 0 000-6zm10 0a3 3 0 100 6 3 3 0 000-6z" />
@@ -153,7 +153,7 @@ function VideoCard({ item, onUnlock, onAddToCart, onSave }) {
 						</button>
 						<button 
 							onClick={() => onSave && onSave(item)} 
-							className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap"
+							className="flex-shrink-0 inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
 						>
 							<svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5v14l7-7 7 7V5a2 2 0 00-2-2H7a2 2 0 00-2 2z" />
