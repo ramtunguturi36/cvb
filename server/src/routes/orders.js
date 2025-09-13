@@ -93,7 +93,7 @@ router.post('/verify', authenticate, async (req, res) => {
 		}
 
 		console.log('Transaction updated, creating QR token...');
-		const qr = await createQrToken({ userId: txn.userId, videoId, ttlMinutes: 60 * 24 * 7, maxDownloads: 5 }); // 7 days, 5 downloads
+		const qr = await createQrToken({ userId: txn.userId, videoId, ttlMinutes: 5, maxDownloads: 1 }); // 5 minutes, single use
 		
 		if (!qr || !qr.token) {
 			console.error('Failed to create QR token');
@@ -124,8 +124,7 @@ router.post('/verify', authenticate, async (req, res) => {
 			token: qr.token,
 			txn: txn._id,
 			message: 'Payment verified successfully',
-			expiresAt: qr.expiresAt,
-			downloadsRemaining: qr.maxDownloads
+			expiresAt: qr.expiresAt
 		};
 
 		console.log('Sending success response:', response);

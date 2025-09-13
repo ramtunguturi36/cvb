@@ -1,5 +1,41 @@
 import { useState } from 'react'
 
+function ExpiryTimer({ expiryTime, onExpire }) {
+	const [timeLeft, setTimeLeft] = useState('');
+
+	useEffect(() => {
+		const updateTimer = () => {
+			const now = new Date().getTime();
+			const expiry = new Date(expiryTime).getTime();
+			const diff = expiry - now;
+
+			if (diff <= 0) {
+				setTimeLeft('Expired');
+				onExpire();
+				return;
+			}
+
+			const minutes = Math.floor(diff / 60000);
+			const seconds = Math.floor((diff % 60000) / 1000);
+			setTimeLeft(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+		};
+
+		updateTimer();
+		const interval = setInterval(updateTimer, 1000);
+		return () => clearInterval(interval);
+	}, [expiryTime, onExpire]);
+
+	return (
+		<div className="text-sm font-medium">
+			{timeLeft === 'Expired' ? (
+				<span className="text-red-500">Expired</span>
+			) : (
+				<span className="text-orange-500">Expires in: {timeLeft}</span>
+			)}
+		</div>
+	);
+}
+
 export default function QRAccess({ isOpen, onClose, onAccessVideo }) {
 	const [qrToken, setQrToken] = useState('')
 	const [loading, setLoading] = useState(false)
@@ -168,23 +204,15 @@ export default function QRAccess({ isOpen, onClose, onAccessVideo }) {
 
 							{qrImage && (
 								<div className="text-center">
-									<img src={qrImage} alt="QR Code" className="w-48 h-48 mx-auto rounded-lg border border-gray-200" />
+									<img src={qrImage} alt="Access Image" className="w-48 h-48 mx-auto rounded-lg border border-gray-200" />
 									<p className="text-xs text-gray-500 mt-2 break-all">Token: {qrToken}</p>
-									<div className="mt-3 flex items-center justify-center space-x-2">
-										<button
-											onClick={() => {
-												if (!qrImage) return
-												const link = document.createElement('a')
-												link.href = qrImage
-												link.download = `qr-${qrToken}.png`
-												document.body.appendChild(link)
-												link.click()
-												link.remove()
-											}}
-											className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg"
-										>
-											Download QR
-										</button>
+									<div className="mt-2">
+										<ExpiryTimer expiryTime={new Date(video.expiresAt)} onExpire={() => {
+											setVideo(null);
+											setQrToken('');
+											setQrImage('');
+											setError('Access expired. Please request a new token.');
+										}} />
 									</div>
 								</div>
 							)}

@@ -24,15 +24,20 @@ router.post('/consume', async (req, res) => {
 router.get('/qr/:token', async (req, res) => {
 	try {
 		const { token } = req.params;
-		const qrCodeDataURL = await generateQRCode(token);
+		const qrToken = await QRToken.findOne({ token }).populate('videoId');
 		
-		// Return the QR code as JSON with the data URL
+		if (!qrToken || !qrToken.videoId) {
+			return res.status(404).json({ error: 'Token or video not found' });
+		}
+
+		// Return the admin uploaded image
 		return res.json({ 
-			qrCode: qrCodeDataURL,
-			token: token
+			qrCode: qrToken.videoId.thumbnailUrl, // Use the video's thumbnail URL
+			token: token,
+			expiresAt: qrToken.expiresAt
 		});
 	} catch (err) {
-		return res.status(500).json({ error: 'Failed to generate QR code' });
+		return res.status(500).json({ error: 'Failed to get image' });
 	}
 });
 
